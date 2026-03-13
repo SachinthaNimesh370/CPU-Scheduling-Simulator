@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CPU Scheduling Simulator</title>
+  <meta name="description" content="Interactive CPU Scheduling Algorithms Simulator — FCFS, Round Robin, SPN, SRTN, Priority" />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ─── Header ───────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <h1>CPU Scheduler</h1>
+          <p>Operating Systems Simulator</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ─── Input Panel ──────────────────────────────────────── -->
+    <section class="card input-panel">
+      <h2 class="section-title">⚙️ Configuration</h2>
+
+      <!-- Algorithm Selection -->
+      <div class="field">
+        <label for="algorithm">Scheduling Algorithm</label>
+        <div class="select-wrapper">
+          <select id="algorithm" onchange="toggleQuantum()">
+            <option value="FCFS">First Come First Served (FCFS)</option>
+            <option value="RR">Round Robin (RR)</option>
+            <option value="SPN">Shortest Process Next (SPN / SJF)</option>
+            <option value="SRTN">Shortest Remaining Time Next (SRTN)</option>
+            <option value="PRIORITY">Priority Scheduling</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quantum (only for RR) -->
+      <div class="field" id="quantum-field" style="display:none">
+        <label for="quantum">Time Quantum</label>
+        <input type="number" id="quantum" value="2" min="1" max="100" />
+      </div>
+
+      <!-- Process Table -->
+      <div class="field">
+        <div class="table-toolbar">
+          <label>Process List</label>
+          <div class="btn-group">
+            <button class="btn btn-ghost" onclick="addRow()">＋ Add Process</button>
+            <button class="btn btn-ghost" onclick="clearTable()">🗑 Clear</button>
+            <button class="btn btn-ghost" onclick="loadSample()">📋 Load Sample</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table id="process-table">
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>Arrival Time</th>
+                <th>Burst Time</th>
+                <th id="priority-col">Priority<br><small>(lower = higher)</small></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="process-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="run-btn" onclick="runScheduler()">
+        <span>▶ Run Scheduler</span>
+      </button>
+    </section>
+
+    <!-- ─── Results Panel ─────────────────────────────────────── -->
+    <section class="card results-panel" id="results" style="display:none">
+      <h2 class="section-title">📊 Results — <span id="result-algo"></span></h2>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <p class="card-label">Avg Waiting Time</p>
+          <p class="card-value" id="avg-wt">—</p>
+          <p class="card-unit">ms</p>
+        </div>
+        <div class="summary-card">
+          <p class="card-label">Avg Turnaround Time</p>
+          <p class="card-value" id="avg-tat">—</p>
+          <p class="card-unit">ms</p>
+        </div>
+      </div>
+
+      <!-- Gantt Chart -->
+      <div class="field">
+        <label>Gantt Chart</label>
+        <div class="gantt-scroll">
+          <div id="gantt-chart" class="gantt-chart"></div>
+          <div id="gantt-labels" class="gantt-labels"></div>
+        </div>
+      </div>
+
+      <!-- Process results table -->
+      <div class="field">
+        <label>Process Details</label>
+        <div class="table-wrap">
+          <table id="result-table">
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>Arrival</th>
+                <th>Burst</th>
+                <th>Start</th>
+                <th>Finish</th>
+                <th>Waiting Time</th>
+                <th>Turnaround Time</th>
+              </tr>
+            </thead>
+            <tbody id="result-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Best Algorithm Recommendation -->
+      <div class="recommendation" id="recommendation"></div>
+    </section>
+
+    <!-- ─── Compare All Panel ─────────────────────────────────── -->
+    <section class="card compare-panel" id="compare-section" style="display:none">
+      <h2 class="section-title">🏆 Algorithm Comparison</h2>
+      <p class="compare-desc">Run all algorithms on the same process set and compare performance.</p>
+      <button class="btn btn-secondary" onclick="compareAll()">Compare All Algorithms</button>
+      <div id="compare-results"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>CPU Scheduling Simulator &mdash; Operating Systems Assignment</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
